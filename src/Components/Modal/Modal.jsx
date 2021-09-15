@@ -6,8 +6,6 @@ import css from "./Modal.module.css";
 const modalRoot = document.querySelector("#modal-root");
 
 export class Modal extends Component {
-  state = {};
-
   componentDidMount() {
     window.addEventListener("keydown", this.closeEscape);
   }
@@ -26,7 +24,7 @@ export class Modal extends Component {
     return createPortal(
       <div className={css.Overlay} onClick={this.props.onClose}>
         <div className={css.Modal}>
-          <img src={this.props.largeSrc} alt={this.props.alt} />
+          <img src={this.props.largeImage} alt={this.props.alt} />
         </div>
       </div>,
       modalRoot
@@ -35,7 +33,7 @@ export class Modal extends Component {
 }
 
 Modal.propTypes = {
-  largeSrc: PropTypes.string.isRequired,
+  largeImage: PropTypes.string.isRequired,
   alt: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
 };

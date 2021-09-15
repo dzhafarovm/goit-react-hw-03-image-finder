@@ -10,11 +10,10 @@ import css from "./App.module.css";
 export class App extends Component {
   state = {
     searchQuery: "",
-    largeSrc: "",
+    selectedImage: null,
     page: 1,
     arrImages: [],
     loading: false,
-    showModal: false,
     error: false,
   };
 
@@ -52,22 +51,15 @@ export class App extends Component {
       .finally(() => this.setState({ loading: false }));
   };
 
-  // --> Открытие модалки
-  showModal = (e) => {
-    const { largeimage } = e.target.attributes;
-
-    this.setState({
-      showModal: true,
-      largeSrc: largeimage.value,
-    });
-  };
+  // --> Выбор src для модального окна
+  handleSelectImage = (largeImage) =>
+    this.setState({ selectedImage: largeImage });
 
   // --> Закрытие модалки
   closeModal = (e) => {
     if (e.target === e.currentTarget || e.code === "Escape") {
       this.setState({
-        showModal: false,
-        largeSrc: "",
+        selectedImage: null,
       });
     }
   };
@@ -82,7 +74,6 @@ export class App extends Component {
 
   // --> Сброс параметров для нового запроса
   updateQuery = (query) => {
-    // console.log("query", query);
     this.setState({
       searchQuery: query,
       page: 1,
@@ -91,7 +82,7 @@ export class App extends Component {
   };
 
   render() {
-    const { searchQuery, arrImages, loading, showModal, largeSrc, error } =
+    const { searchQuery, arrImages, loading, selectedImage, error } =
       this.state;
 
     const showLoadMoreButton = arrImages.length > 0 && !loading;
@@ -111,14 +102,14 @@ export class App extends Component {
         <ImageGallery
           images={this.state.arrImages}
           query={this.state.searchQuery}
-          onClick={this.showModal}
+          onSelect={this.handleSelectImage}
         />
 
         {showLoadMoreButton && <Button onClick={this.fetchImages} />}
 
-        {showModal && (
+        {selectedImage && (
           <Modal
-            largeSrc={largeSrc}
+            largeImage={selectedImage}
             alt={searchQuery}
             onClose={this.closeModal}
           />
