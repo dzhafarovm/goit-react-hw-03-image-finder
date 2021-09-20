@@ -19,20 +19,27 @@ export class App extends Component {
 
   // --> Запрос при обновлении компонента
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.searchQuery !== this.state.searchQuery) {
+    if (
+      prevState.searchQuery !== this.state.searchQuery ||
+      prevState.page !== this.state.page
+    ) {
       this.fetchImages();
-      this.scrollTo();
     }
   }
 
-  // --> Запрос и рендер изобрважений
+  nextPage = () => {
+    this.setState((prevState) => ({
+      page: prevState.page + 1,
+    }));
+  };
+
+  // --> Запрос и рендер изображений
   fetchImages = () => {
     const { searchQuery, page } = this.state;
     const q = searchQuery;
     const optionsApi = { q, page };
 
     this.setState((prevState) => ({
-      page: prevState.page + 1,
       loading: true,
     }));
 
@@ -43,6 +50,7 @@ export class App extends Component {
             arrImages: [...prevState.arrImages, ...arrImages],
             error: false,
           }));
+          this.scrollTo();
         } else {
           this.setState({ error: true });
         }
@@ -97,15 +105,15 @@ export class App extends Component {
           </h2>
         )}
 
-        {loading && <LoaderSpinner />}
-
         <ImageGallery
           images={this.state.arrImages}
           query={this.state.searchQuery}
           onSelect={this.handleSelectImage}
         />
 
-        {showLoadMoreButton && <Button onClick={this.fetchImages} />}
+        {loading && <LoaderSpinner />}
+
+        {showLoadMoreButton && <Button onClick={this.nextPage} />}
 
         {selectedImage && (
           <Modal
